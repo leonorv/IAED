@@ -15,7 +15,8 @@
 #define MAX_EMAIL 512
 #define MAX_TEL 64
 
-static list_link head;
+/*static list_link head;*/
+static list lista;
 static link tree_head;
 /*static domain_link domain_head;*/
 
@@ -43,7 +44,7 @@ void adiciona() {
     contacto = criaContacto(nome, tel, email);
 
 
-    head = insertEnd(head, contacto);
+    /*head*/lista = insertEnd(lista, contacto);
     tree_head = insertR(tree_head, contacto);
 
 
@@ -105,7 +106,7 @@ void apaga() {
         struct_dominio->counter--;
     }*/
 
-    head = delete(head, nome);
+    lista = delete(lista, nome);
     tree_head = deleteR(tree_head, nome);
 
 
@@ -168,10 +169,9 @@ void contaDominio() {
     list_link t, aux;
     int counter = 0;
     scanf(" %[0-9a-zA-Z-_.-]", dominio);
-    for (t = head; t != NULL; t = aux) {
+    for (t = lista->head; t != NULL; t = aux) {
         if (strcmp(t->contacto->email->dominio, dominio) == 0) counter++;
         aux = t->next;
-        t = aux;
     }
     printf("%s:%d\n", dominio, counter);
     free(dominio);
@@ -204,7 +204,8 @@ void traverse(link h) {
 int main() {
     int x = TRUE;
     int c;
-    head = NULL;
+    /*head = NULL;*/
+    lista = NEW();
     tree_head = NULL;
     /*domain_head = NULL;*/
     c = getchar();
@@ -214,7 +215,7 @@ int main() {
                 adiciona();
                 break;
             case 'l':
-                print(head);
+                print(lista->head);
                 break;
             case 'p':
                 procura();
@@ -229,7 +230,7 @@ int main() {
                 contaDominio();
                 break;
             case 'x':
-                freeList(head);
+                freeList(lista->head);
                 traverse(tree_head);
                 /*d_traverse(domain_head);*/
                 x = FALSE;

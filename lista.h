@@ -7,14 +7,18 @@
 
 typedef struct list_node {
     Contacto contacto;
-    struct list_node *next;
+    struct list_node *next, *prev;
 } *list_link;
 
-list_link NEW(Contacto c);
-list_link insertEnd(list_link head, Contacto c);
+typedef struct struct_list {
+    list_link head, tail;
+} *list;
+
+list NEW();
+list insertEnd(list l, Contacto c);
 void print(list_link head);
 list_link lookup(list_link head, char* text);
-list_link delete(list_link head, char* text);
+list delete(list l, char* text);
 void list_init(list_link head);
 
 #endif
