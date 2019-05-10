@@ -1,12 +1,13 @@
 #include "dominio.h"
 
-Item criaDominio(char *dominio) {
-    Item new = (Item) malloc(sizeof(struct stru_Dominio));
-    new->dominio = dominio;
-    new->counter = 0;
+Dominio criaDominio(char *nome) {
+    Dominio new = (Dominio) malloc(sizeof(struct stru_Dominio));
+    new->nome_dominio = strdup(nome);
+    new->counter = 1;
     return new;
 }
 
-void apagaDominio(Item d) {
+void apagaDominio(Dominio d) {
+    free(d->nome_dominio);
     free(d);
 }

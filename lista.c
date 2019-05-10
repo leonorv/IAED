@@ -35,13 +35,13 @@ list_link lookup(list_link head, char* text) {
 
 list_link delete(list_link head, char* text) {
     list_link t, prev;
-    for (t = head, prev = NULL; t != NULL;
-    prev = t, t = t->next) {
-        if(strcmp(t->contacto->nome, text) == 0) {
+    for (t = head, prev = NULL; t != NULL; prev = t, t = t->next) {
+        if (strcmp(t->contacto->nome, text) == 0) {
             if (t == head) head = t->next;
             else prev->next = t->next;
 
             free(t);
+            return head;
         }
     }
     return head;

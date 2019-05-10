@@ -102,6 +102,7 @@ link deleteR(link h, Key nome) {
             if (h->l == NULL && h->r == NULL) h = NULL;
             else if (h->l == NULL) h = h->r;
             else h = h->l;
+            apagaContacto(aux->contacto);
             free(aux);
         }
     }

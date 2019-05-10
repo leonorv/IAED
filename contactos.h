@@ -7,12 +7,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct stru_Email {
-    char *local, *dominio;
-} *Email;
+extern char *strdup(const char *s);
 
 typedef char *Key;
+
+
+typedef struct stru_Email {
+    char *local;/*, *dominio;*/
+    Key dominio;
+} *Email;
+
 typedef struct stru_Contacto {
     Email email;
     Key nome;

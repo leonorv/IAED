@@ -1,18 +1,23 @@
-#ifndef _DOMINIO_
-#define _DOMINIO_
+#ifndef _DOMINIOS_
+#define _DOMINIOS_
+
+#define d_key(A) (A != NULL ? A->nome_dominio : "")
+#define d_less(A, B) strcmp(A, B) < 0
+#define d_equal(A, B) strcmp(A, B) == 0
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef char *Key;
+extern char *strdup(const char *s);
 
+typedef char *d_Key;
 typedef struct stru_Dominio {
-    Key dominio;
+    d_Key nome_dominio;
     int counter;
 } *Dominio;
 
-
-Item criaDominio(Key, char*);
-void apagaDominio(Item d);
+Dominio criaDominio(d_Key k);
+void apagaDominio(Dominio d);
 
 #endif
