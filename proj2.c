@@ -5,8 +5,8 @@
 #include "contactos.h"
 #include "tree.h"
 
-/*#include "domain_list.h"
-#include "dominio.h"*/
+#include "domain_list.h"
+
 
 #define FALSE 0
 #define TRUE 1
@@ -18,54 +18,60 @@
 /*static list_link head;*/
 static list lista;
 static link tree_head;
-/*static domain_link domain_head;*/
+static domain_list lista_dominios;
 
 void adiciona() {
+    char nome_buffer[MAX_NOME], local_buffer[MAX_EMAIL], dominio_buffer[MAX_EMAIL], tel_buffer[MAX_TEL];
     char *nome = NULL, *local = NULL, *dominio = NULL, *tel = NULL; 
     Email email = NULL;
     Contacto contacto = NULL;
-
-    /*Dominio struct_dominio = NULL;*/
-
-    nome = (char*) malloc(sizeof(char)*MAX_NOME);
-    local = (char*) malloc(sizeof(char)*MAX_EMAIL);
-    dominio = (char*) malloc(sizeof(char)*MAX_EMAIL);
-    tel = (char*) malloc(sizeof(char)*MAX_TEL);
-    scanf(" %[0-9a-zA-Z_-] %[0-9a-zA-Z_.-]@%[0-9a-zA-Z-_.-] %[0-9-]", nome, local, dominio, tel);
+    domain_list_link node_dominio = NULL;
+    scanf(" %[0-9a-zA-Z_-] %[0-9a-zA-Z_.-]@%[0-9a-zA-Z-_.-] %[0-9-]", nome_buffer, local_buffer, dominio_buffer, tel_buffer);
+    nome = strdup(nome_buffer);
+    local = strdup(local_buffer);
+    dominio = strdup(dominio_buffer);
+    tel = strdup(tel_buffer);
     if (STsearch(tree_head, nome) != NULL) {
         printf("Nome existente.\n");
         free(nome);
         free(local);
         free(dominio);
         free(tel);
+
+
+
         return;
     }
     email = criaEmail(local, dominio);
     contacto = criaContacto(nome, tel, email);
 
-
-    /*head*/lista = insertEnd(lista, contacto);
+    lista = insertEnd(lista, contacto);
     tree_head = insertR(tree_head, contacto);
 
-
-    /*struct_dominio = d_STsearch(domain_head, contacto->email->dominio);
-    if (struct_dominio == NULL) domain_head = d_insertR(domain_head, criaDominio(dominio));
+    node_dominio = d_lookup(lista_dominios->head, dominio);
+    if (node_dominio == NULL) lista_dominios = d_insertEnd(lista_dominios, dominio);
     else {
-        struct_dominio->counter++;
-    }*/
+        node_dominio->counter++;
+        free(dominio);
+    }
+
 
     free(nome);
     free(local);
-    free(dominio);
+    /*free(dominio);*/
     free(tel);
+
+
     return;
 }
 
 void procura() {
+    char nome_buffer[MAX_NOME];
     char *nome = NULL;
     Contacto c = NULL;
-    nome = (char*) malloc(sizeof(char)*MAX_NOME);
-    scanf(" %[0-9a-zA-Z_-]", nome);
+    /*nome = (char*) malloc(sizeof(char)*MAX_NOME);*/
+    scanf(" %[0-9a-zA-Z_-]", nome_buffer);
+    nome = strdup(nome_buffer);
     c = STsearch(tree_head, nome);
     if (c == NULL) {
         printf("Nome inexistente.\n");
@@ -82,13 +88,15 @@ void procura() {
 }
 
 void apaga() {
+    char nome_buffer[MAX_NOME];
     char *nome = NULL;
     Contacto c = NULL;
 
-    /*Dominio struct_dominio = NULL;*/
+    domain_list_link node_dominio = NULL;
 
-    nome = (char*) malloc(sizeof(char)*MAX_NOME);
-    scanf(" %[0-9a-zA-Z_-]", nome);
+    /*nome = (char*) malloc(sizeof(char)*MAX_NOME);*/
+    scanf(" %[0-9a-zA-Z_-]", nome_buffer);
+    nome = strdup(nome_buffer);
     c = STsearch(tree_head, nome);
     if (c == NULL) {
         printf("Nome inexistente.\n");
@@ -98,13 +106,13 @@ void apaga() {
         return;
     }
 
-    /*struct_dominio = d_STsearch(domain_head, c->email->dominio);
-    if (struct_dominio->counter == 1) {
-        domain_head = d_deleteR(domain_head, struct_dominio->nome_dominio);
+    node_dominio = d_lookup(lista_dominios->head, c->email->dominio);
+    if (node_dominio->counter == 1) {
+        lista_dominios = d_delete(lista_dominios, node_dominio->dominio);
     }
     else {
-        struct_dominio->counter--;
-    }*/
+        node_dominio->counter--;
+    }
 
     lista = delete(lista, nome);
     tree_head = deleteR(tree_head, nome);
@@ -118,13 +126,18 @@ void apaga() {
 }
 
 void mudaEmail() {
+    char nome_buffer[MAX_NOME], local_buffer[MAX_EMAIL], dominio_buffer[MAX_EMAIL];
     char *nome = NULL, *local = NULL, *dominio = NULL;
     Email email = NULL;
     Contacto c = NULL;
-    nome = (char*) malloc(sizeof(char)*MAX_NOME);
-    local = (char*) malloc(sizeof(char)*MAX_EMAIL);
-    dominio = (char*) malloc(sizeof(char)*MAX_EMAIL);
-    scanf(" %[0-9a-zA-Z_-] %[0-9a-zA-Z_.-]@%[0-9a-zA-Z-_.-]", nome, local, dominio);
+
+    domain_list_link node_dominio = NULL;
+
+
+    scanf(" %[0-9a-zA-Z_-] %[0-9a-zA-Z_.-]@%[0-9a-zA-Z-_.-]", nome_buffer, local_buffer, dominio_buffer);
+    nome = strdup(nome_buffer);
+    local = strdup(local_buffer);
+    dominio = strdup(dominio_buffer);
     c = STsearch(tree_head, nome);
     if (c == NULL) {
         printf("Nome inexistente.\n");
@@ -137,44 +150,52 @@ void mudaEmail() {
         return;
     }
     email = criaEmail(local, dominio);
+
+
+    node_dominio = d_lookup(lista_dominios->head, c->email->dominio);
+    if (node_dominio->counter == 1) {
+        lista_dominios = d_delete(lista_dominios, node_dominio->dominio);
+    }
+    else {
+        node_dominio->counter--;
+    }
+
     free(c->email->local);
     free(c->email->dominio);
     free(c->email);
     c->email = email;
 
+    node_dominio = d_lookup(lista_dominios->head, c->email->dominio);
+    if (node_dominio == NULL) lista_dominios = d_insertEnd(lista_dominios, dominio);
+    else node_dominio->counter++;
+
+
     free(nome);
     free(local);
-    free(dominio);
+    /*free(dominio);*/
 
 
     return;
 }
 
 void contaDominio() {
-    /*char *dominio = (char*) malloc(sizeof(char)*MAX_EMAIL);
-    Dominio struct_dominio;
-    scanf(" %[0-9a-zA-Z-_.-]", dominio);
-    struct_dominio = d_STsearch(domain_head, dominio);
-    if (struct_dominio != NULL) {
-        printf("%s:%d\n", dominio, struct_dominio->counter);
+    char dominio_buffer[MAX_EMAIL];
+    char *dominio = NULL;
+    domain_list_link node_dominio = NULL;
+    scanf(" %[0-9a-zA-Z-_.-]", dominio_buffer);
+    dominio = strdup(dominio_buffer);
+    node_dominio = d_lookup(lista_dominios->head, dominio);
+    if (node_dominio == NULL) {
+        printf("%s:%d\n", dominio, 0);
         free(dominio);
         return;
     }
     else {
-        printf("%s:%d\n", dominio, 0);
+        printf("%s:%d\n", dominio, node_dominio->counter);
         free(dominio);
         return;
-    }*/
-    char *dominio = (char*) malloc(sizeof(char)*MAX_EMAIL);
-    list_link t, aux;
-    int counter = 0;
-    scanf(" %[0-9a-zA-Z-_.-]", dominio);
-    for (t = lista->head; t != NULL; t = aux) {
-        if (strcmp(t->contacto->email->dominio, dominio) == 0) counter++;
-        aux = t->next;
     }
-    printf("%s:%d\n", dominio, counter);
-    free(dominio);
+
 }
 
 void freeList(list_link head) {
@@ -193,21 +214,21 @@ void traverse(link h) {
     free(h);
 }
 
-/*void d_traverse(domain_link h) {
-    if (h == NULL) return;
-    d_traverse(h->l);
-    d_traverse(h->r);
-    apagaDominio(h->dominio);
-    free(h);
-}*/
+void d_freeList(domain_list_link head) {
+    domain_list_link t, aux;
+    for (t = head; t != NULL; t = aux) {
+        aux = t->next;
+        free(t->dominio);
+        free(t);
+    }
+}
 
 int main() {
     int x = TRUE;
     int c;
-    /*head = NULL;*/
     lista = NEW();
     tree_head = NULL;
-    /*domain_head = NULL;*/
+    lista_dominios = d_NEW();
     c = getchar();
     while (x == TRUE) {
         switch(c) {
@@ -232,7 +253,7 @@ int main() {
             case 'x':
                 freeList(lista->head);
                 traverse(tree_head);
-                /*d_traverse(domain_head);*/
+                d_freeList(lista_dominios->head);
                 x = FALSE;
         }
         c = getchar();

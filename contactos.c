@@ -15,7 +15,6 @@ Contacto criaContacto(char *nome, char *tel, Email email) {
     new->telemovel = strdup(tel);
     new->email = email;
 
-
     return new;
 }
 
