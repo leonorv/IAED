@@ -1,8 +1,9 @@
+/**** Operacoes para arvore binaria ****/
 #include "tree.h"
 
-link NEW_NODE_TREE(Contacto c, link l, link r) {
+link NEW_NODE_TREE(Contact c, link l, link r) {
     link x = (link) malloc(sizeof(struct node));
-    x->contacto = c;
+    x->contact = c;
     x->l = l;
     x->r = r;
     x->height = 1;
@@ -42,19 +43,19 @@ link rotR(link h) {
     return x;
 }
 
-link rotLR(link h) { /*rotação dupla esquerda direita*/
+link rotLR(link h) { 
     if (h == NULL) return h;
     h->l = rotL(h->l);
     return rotR(h);
 }
 
-link rotRL(link h) { /*rotação dupla direita esquerda*/
+link rotRL(link h) { 
     if (h == NULL) return h;
     h->r = rotR(h->r);
     return rotL(h);
 }
 
-int Balance(link h) { /*Balance factor*/
+int Balance(link h) { 
     if (h == NULL) return 0;
     return height(h->l) - height(h->r);
 }
@@ -79,30 +80,30 @@ link AVLbalance(link h) {
     return h;
 }
 
-link insertR(link h, Contacto contacto) {
-    if (h == NULL) return NEW_NODE_TREE(contacto, NULL, NULL);
-    if (less(key(contacto), key(h->contacto))) h->l = insertR(h->l, contacto);
-    else h->r = insertR(h->r, contacto);
+link insertR(link h, Contact contact) {
+    if (h == NULL) return NEW_NODE_TREE(contact, NULL, NULL);
+    if (less(key(contact), key(h->contact))) h->l = insertR(h->l, contact);
+    else h->r = insertR(h->r, contact);
     h = AVLbalance(h);
     return h;
 }
 
-link deleteR(link h, Key nome) {
+link deleteR(link h, Key name) {
     if (h == NULL) return h;
-    else if (less(nome, key(h->contacto))) h->l = deleteR(h->l, nome);
-    else if (less(key(h->contacto), nome)) h->r = deleteR(h->r, nome) ;
+    else if (less(name, key(h->contact))) h->l = deleteR(h->l, name);
+    else if (less(key(h->contact), name)) h->r = deleteR(h->r, name) ;
     else {
         if (h->l != NULL && h->r != NULL){
             link aux = max(h->l);
-            {Contacto x; x = h->contacto; h->contacto = aux->contacto; aux->contacto = x;}
-            h->l = deleteR(h->l, key(aux->contacto));
+            {Contact x; x = h->contact; h->contact = aux->contact; aux->contact = x;}
+            h->l = deleteR(h->l, key(aux->contact));
         }
         else {
             link aux = h;
             if (h->l == NULL && h->r == NULL) h = NULL;
             else if (h->l == NULL) h = h->r;
             else h = h->l;
-            apagaContacto(aux->contacto);
+            deleteContact(aux->contact);
             free(aux);
         }
     }
@@ -110,14 +111,14 @@ link deleteR(link h, Key nome) {
     return h;
 }
 
-Contacto searchR(link h, Key v) {
+Contact searchR(link h, Key v) {
     if (h == NULL) return NULL;
-    if (equal(v, key(h->contacto))) return h->contacto;
-    if (less(v, key(h->contacto))) return searchR(h->l, v);
+    if (equal(v, key(h->contact))) return h->contact;
+    if (less(v, key(h->contact))) return searchR(h->l, v);
     else return searchR(h->r, v);
 }
 
-Contacto STsearch(link head, Key v) {
+Contact STsearch(link head, Key v) {
     return searchR(head, v);
 }
 

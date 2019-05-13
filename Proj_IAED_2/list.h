@@ -1,12 +1,13 @@
-#ifndef _LISTA_
-#define _LISTA_
+/*** LISTA DUPLAMENTE LIGADA ****/
+#ifndef _LIST_
+#define _LIST_
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "contactos.h"
+#include "contacts.h"
 
 typedef struct list_node {
-    Contacto contacto;
+    Contact contact;
     struct list_node *next, *prev;
 } *list_link;
 
@@ -15,10 +16,8 @@ typedef struct struct_list {
 } *list;
 
 list NEW();
-list insertEnd(list l, Contacto c);
+list insertEnd(list l, Contact c);
 void print(list_link head);
-list_link lookup(list_link head, char* text);
 list delete(list l, char* text);
-void list_init(list_link head);
 
 #endif
